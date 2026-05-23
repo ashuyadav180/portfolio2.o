@@ -158,6 +158,8 @@ function HudMetric({ label, value, color = "#38bdf8" }: { label: string; value: 
 
 /* ─── Hero Section ───────────────────────────────────── */
 export default function HeroSection() {
+  const [showToast, setShowToast] = useState(false);
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Localised hero depth gradient — AI blue pulse */}
@@ -295,6 +297,13 @@ export default function HeroSection() {
                     href={href}
                     target={href.startsWith("mailto:") ? undefined : "_blank"}
                     rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                    onClick={(e) => {
+                      if (href.startsWith("mailto:")) {
+                        navigator.clipboard.writeText(personalInfo.email);
+                        setShowToast(true);
+                        setTimeout(() => setShowToast(false), 3000);
+                      }
+                    }}
                     aria-label={label}
                     className="w-9 h-9 rounded-xl flex items-center justify-center text-[#8ea0b5] hover:text-[#38bdf8] border border-white/6 hover:border-[#38bdf8]/30 transition-all duration-300 cursor-pointer"
                     style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(12px)" }}
@@ -388,6 +397,21 @@ export default function HeroSection() {
           <ChevronDown className="text-[#38bdf8]/60" size={16} />
         </motion.div>
       </motion.div>
+
+      {/* Premium Copied Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl border border-cyan-500/30 bg-[#040714]/80 backdrop-blur-xl shadow-[0_10px_30px_rgba(34,211,238,0.15)] font-mono-custom text-[0.68rem] text-cyan-400 select-none"
+          >
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+            <span>EMAIL COPIED: ashuya38@gmail.com</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

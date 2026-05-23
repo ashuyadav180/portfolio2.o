@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { 
   Mail, 
   ArrowUp, 
@@ -555,6 +555,7 @@ const socials = [
 ];
 
 export default function Footer() {
+  const [showToast, setShowToast] = useState(false);
   const [logs, setLogs] = useState<string[]>([
     "initializing neural communication layer...",
     "ai systems online",
@@ -789,6 +790,13 @@ export default function Footer() {
                   href={href}
                   target={href.startsWith("mailto:") ? undefined : "_blank"}
                   rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                  onClick={(e) => {
+                    if (href.startsWith("mailto:")) {
+                      navigator.clipboard.writeText(personalInfo.email);
+                      setShowToast(true);
+                      setTimeout(() => setShowToast(false), 3000);
+                    }
+                  }}
                   aria-label={label}
                   className="flex items-center gap-3 p-2 rounded-xl border border-white/5 hover:border-white/10 hover:bg-[#070b20]/50 transition-all group/soc cursor-pointer"
                 >
@@ -902,6 +910,21 @@ export default function Footer() {
         </div>
 
       </div>
+
+      {/* Premium Copied Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl border border-cyan-500/30 bg-[#040714]/80 backdrop-blur-xl shadow-[0_10px_30px_rgba(34,211,238,0.15)] font-mono-custom text-[0.68rem] text-cyan-400 select-none"
+          >
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+            <span>EMAIL COPIED: ashuya38@gmail.com</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </footer>
   );
 }

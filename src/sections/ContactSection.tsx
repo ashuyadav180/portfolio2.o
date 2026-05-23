@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { 
   Mail, 
   Send, 
@@ -522,6 +522,7 @@ const CONSTANT_LOGS = [
 ];
 
 export default function ContactSection() {
+  const [showToast, setShowToast] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [status, setStatus] = useState<Status>("idle");
   
@@ -699,6 +700,13 @@ export default function ContactSection() {
                       {href ? (
                         <a 
                           href={href}
+                          onClick={(e) => {
+                            if (href.startsWith("mailto:")) {
+                              navigator.clipboard.writeText(personalInfo.email);
+                              setShowToast(true);
+                              setTimeout(() => setShowToast(false), 3000);
+                            }
+                          }}
                           className="text-white hover:text-cyan-400 text-xs md:text-sm font-mono-custom font-semibold truncate tracking-wider hover:underline transition-colors block cursor-pointer"
                         >
                           {val}
@@ -753,6 +761,13 @@ export default function ContactSection() {
                   href={href}
                   target={href.startsWith("mailto:") ? undefined : "_blank"}
                   rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                  onClick={(e) => {
+                    if (href.startsWith("mailto:")) {
+                      navigator.clipboard.writeText(personalInfo.email);
+                      setShowToast(true);
+                      setTimeout(() => setShowToast(false), 3000);
+                    }
+                  }}
                   className="flex items-center gap-3.5 glass-strong rounded-2xl p-4 border border-white/6 hover:border-cyan-500/30 group transition-all select-none cursor-pointer relative overflow-hidden shadow-lg"
                   whileHover={{ x: 6, backgroundColor: "rgba(7, 12, 36, 0.6)" }}
                 >
@@ -1038,6 +1053,21 @@ export default function ContactSection() {
         </motion.div>
 
       </div>
+
+      {/* Premium Copied Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl border border-cyan-500/30 bg-[#040714]/80 backdrop-blur-xl shadow-[0_10px_30px_rgba(34,211,238,0.15)] font-mono-custom text-[0.68rem] text-cyan-400 select-none"
+          >
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+            <span>EMAIL COPIED: ashuya38@gmail.com</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
