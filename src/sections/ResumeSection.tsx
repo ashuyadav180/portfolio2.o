@@ -539,59 +539,14 @@ export default function ResumeSection() {
   }, []);
 
   const triggerHtml2PdfDownload = () => {
-    return new Promise<void>((resolve, reject) => {
-      const loadHtml2Pdf = (): Promise<any> => {
-        return new Promise((resolveScript, rejectScript) => {
-          if ((window as any).html2pdf) {
-            resolveScript((window as any).html2pdf);
-            return;
-          }
-          const script = document.createElement("script");
-          script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-          script.onload = () => resolveScript((window as any).html2pdf);
-          script.onerror = rejectScript;
-          document.head.appendChild(script);
-        });
-      };
-
-      loadHtml2Pdf().then((html2pdf) => {
-        const element = document.getElementById("offscreen-printable-resume");
-        if (!element) {
-          console.error("Offscreen printable resume container not found.");
-          reject(new Error("Offscreen container not found"));
-          return;
-        }
-
-        const opt = {
-          margin: [10, 15, 10, 15],
-          filename: 'Ashu_Yadav_Resume.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { 
-            scale: 2.5,
-            useCORS: true, 
-            logging: false,
-            letterRendering: true,
-            windowWidth: 800
-          },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf().from(element).set(opt).save().then(() => {
-          resolve();
-        }).catch((err: any) => {
-          console.error("PDF generation failed:", err);
-          reject(err);
-        });
-      }).catch((err) => {
-        console.error("Failed to load html2pdf.js from CDN, falling back to static pdf", err);
-        const link = document.createElement("a");
-        link.href = "/resume.pdf";
-        link.download = "Ashu_Yadav_Resume.pdf";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        resolve();
-      });
+    return new Promise<void>((resolve) => {
+      const link = document.createElement("a");
+      link.href = "/resume.pdf";
+      link.download = "Ashu_Yadav_Resume.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      resolve();
     });
   };
 
