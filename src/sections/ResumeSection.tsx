@@ -540,13 +540,62 @@ export default function ResumeSection() {
 
   const triggerHtml2PdfDownload = () => {
     return new Promise<void>((resolve) => {
-      const link = document.createElement("a");
-      link.href = "/resume.pdf";
-      link.download = "Ashu_Yadav_Resume.pdf";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      resolve();
+      const loadHtml2Pdf = (): Promise<any> => {
+        return new Promise((resolveScript, rejectScript) => {
+          if ((window as any).html2pdf) {
+            resolveScript((window as any).html2pdf);
+            return;
+          }
+          const script = document.createElement("script");
+          script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+          script.onload = () => resolveScript((window as any).html2pdf);
+          script.onerror = rejectScript;
+          document.head.appendChild(script);
+        });
+      };
+
+      const fallbackToStatic = () => {
+        const link = document.createElement("a");
+        link.href = "/resume.pdf";
+        link.download = "Ashu_Yadav_Resume.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        resolve();
+      };
+
+      loadHtml2Pdf().then((html2pdf) => {
+        const element = document.getElementById("offscreen-printable-resume");
+        if (!element) {
+          console.error("Offscreen printable resume container not found. Falling back to static PDF.");
+          fallbackToStatic();
+          return;
+        }
+
+        const opt = {
+          margin: [10, 15, 10, 15],
+          filename: 'Ashu_Yadav_Resume.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { 
+            scale: 2.5,
+            useCORS: true, 
+            logging: false,
+            letterRendering: true,
+            windowWidth: 800
+          },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().from(element).set(opt).save().then(() => {
+          resolve();
+        }).catch((err: any) => {
+          console.error("PDF generation failed, falling back to static PDF:", err);
+          fallbackToStatic();
+        });
+      }).catch((err) => {
+        console.error("Failed to load html2pdf.js from CDN, falling back to static PDF:", err);
+        fallbackToStatic();
+      });
     });
   };
 
@@ -1440,7 +1489,11 @@ export default function ResumeSection() {
       </AnimatePresence>
 
       {/* Hidden off-screen resume container for background PDF compilation */}
-      <div className="absolute left-[-9999px] top-[-9999px] overflow-hidden no-print" aria-hidden="true">
+      <div 
+        className="fixed top-0 left-0 z-[-100] opacity-0 pointer-events-none overflow-hidden no-print" 
+        style={{ width: "800px" }}
+        aria-hidden="true"
+      >
         <div 
           id="offscreen-printable-resume" 
           className="bg-white text-black pt-12 px-12 pb-32 font-serif leading-snug text-[13.5px]"
