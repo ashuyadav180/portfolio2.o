@@ -67,8 +67,11 @@ function StaggerText({
   className?: string;
   delay?: number;
 }) {
+  const isGradient = className?.includes("gradient-text");
+  const cleanClassName = isGradient && className ? className.replace("gradient-text", "").trim() : className;
+
   return (
-    <span className={className} aria-label={text}>
+    <span className={cleanClassName} aria-label={text}>
       {text.split("").map((char, i) => (
         <motion.span
           key={i}
@@ -79,7 +82,7 @@ function StaggerText({
             delay: delay + i * 0.045,
             ease: [0.22, 1, 0.36, 1],
           }}
-          className="inline-block"
+          className={`inline-block ${isGradient ? "gradient-text" : ""}`}
           style={{ transformOrigin: "50% 100%", perspective: "600px" }}
         >
           {char === " " ? "\u00A0" : char}
@@ -197,8 +200,8 @@ export default function HeroSection() {
               <div className="text-6xl sm:text-7xl md:text-8xl lg:text-[5.5rem] xl:text-[6.5rem] font-black text-white leading-none tracking-tighter">
                 <StaggerText text="ASHU" delay={0.2} />
               </div>
-              <div className="text-6xl sm:text-7xl md:text-8xl lg:text-[5.5rem] xl:text-[6.5rem] font-black leading-none tracking-tighter gradient-text">
-                <StaggerText text="YADAV" delay={0.38} />
+              <div className="text-6xl sm:text-7xl md:text-8xl lg:text-[5.5rem] xl:text-[6.5rem] font-black leading-none tracking-tighter">
+                <StaggerText text="YADAV" delay={0.38} className="gradient-text" />
               </div>
             </div>
 
