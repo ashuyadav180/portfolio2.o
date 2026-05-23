@@ -787,8 +787,8 @@ export default function Footer() {
                 <a
                   key={label}
                   href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                   aria-label={label}
                   className="flex items-center gap-3 p-2 rounded-xl border border-white/5 hover:border-white/10 hover:bg-[#070b20]/50 transition-all group/soc cursor-pointer"
                 >

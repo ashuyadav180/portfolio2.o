@@ -751,8 +751,8 @@ export default function ContactSection() {
                 <motion.a
                   key={label}
                   href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                   className="flex items-center gap-3.5 glass-strong rounded-2xl p-4 border border-white/6 hover:border-cyan-500/30 group transition-all select-none cursor-pointer relative overflow-hidden shadow-lg"
                   whileHover={{ x: 6, backgroundColor: "rgba(7, 12, 36, 0.6)" }}
                 >

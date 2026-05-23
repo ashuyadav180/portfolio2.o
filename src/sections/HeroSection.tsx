@@ -293,8 +293,8 @@ export default function HeroSection() {
                 <Magnetic key={label} range={40} actionStrength={0.35}>
                   <motion.a
                     href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    target={href.startsWith("mailto:") ? undefined : "_blank"}
+                    rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                     aria-label={label}
                     className="w-9 h-9 rounded-xl flex items-center justify-center text-[#8ea0b5] hover:text-[#38bdf8] border border-white/6 hover:border-[#38bdf8]/30 transition-all duration-300 cursor-pointer"
                     style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(12px)" }}
